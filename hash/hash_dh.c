@@ -71,6 +71,7 @@ hash_ret hash_create(hash ** h, unsigned int capacity){
     h_aux->elems[i].str = NULL;
     h_aux->elems[i].removed = false;
   }
+
   h_aux->size = 0;
   h_aux->capacity = capacity;
 
@@ -89,38 +90,46 @@ hash_ret hash_destroy(hash * h){
 
 hash_ret hash_insert(hash * h, char * str){
   Fnv32_t hash = fnv_32a_str(str, FNV1_32A_INIT);
-  Fnv32_t org_hash;
-  int counter=0, emptyIDX=-1;
+  unsigned int counter = 0, first_empty = -1;
   unsigned long hash2 = djb2(str);
 
   if(h == NULL || str == NULL)
     return hash_ErrParm;
 
   hash = (hash % h->capacity);
-  org_hash = hash;
 
-  while(h->elems[hash].str != NULL || h_aux->elems[i].str==true){
-    /*avoid empty unused spaces*/
-    if (h->elems[hash].str != NULL || h_aux->elems[i].str==true)
-        emptyIDX=hash;
-    /* check if we're trying to insert a previously inserted key */
-    if( strcmp(str, h->elems[hash].str) == 0 )
+  /* Find an empty bucket */
+  while( h->elems[hash].str != NULL )
+  {
+    /* If the current bucket already has the key being inserted */
+    if( strcmp( str, h->elems[hash].str ) == 0){
+      h->elems[hash].removed = false;
       return hash_PrevInserted;
+    }
 
-    /* move to the next bucket */
+    /* Find the first empty bucket */
+    if(first_empty == -1 &&
+       h->elems[hash].removed == true)
+      first_empty = hash;
+
+    /* Move to the next bucket */
     hash = (hash + hash2) % h->capacity;
 
     /* if we have seen all buckets, there are no empty ones */
     if(counter == h->size) 
-      return hash_Full;
+      break;
     counter++;
   }
   
-  if (emptyIDX!=-1) 
-    hash=emptyIDX;
+  if ( first_empty != -1 ) 
+    hash = first_empty;
+  else if( counter == h->size)
+    return hash_Full;
+
+  /* free(h->elems[hash].str); */
 
   h->elems[hash].str = str;
-  h->elems[hash].removed=false;
+  h->elems[hash].removed = false;
   (h->size)++;
 
   return hash_Ok;
@@ -128,17 +137,17 @@ hash_ret hash_insert(hash * h, char * str){
 
 hash_ret hash_search(hash * h, char * str){
   Fnv32_t hash = fnv_32a_str(str, FNV1_32A_INIT);
-  Fnv32_t org_hash;
-  int counter=0;
+  unsigned int counter = 0;
   unsigned long hash2 = djb2(str);
 
   if(h == NULL || str == NULL)
     return hash_ErrParm;
  
   hash = (hash % h->capacity);
-  org_hash = hash;
 
-  while( h->elems[hash].str != NULL && strcmp( str, h->elems[hash].str ) != 0){
+  while( h->elems[hash].str != NULL &&
+         strcmp( str, h->elems[hash].str ) != 0)
+  {
     hash = (hash + hash2) % h->capacity;
 
     if(h->size == counter)
@@ -146,17 +155,16 @@ hash_ret hash_search(hash * h, char * str){
     counter++;
   }
 
-  if(h->elems[hash].str == NULL)
+  if(h->elems[hash].str == NULL    ||
+     h->elems[hash].removed == true  )
     return hash_NotFound;
 
   return hash_Found;
 }
 
-/* removes and reinserts all "chained" elements */
 hash_ret hash_remove(hash * h, char * str){
   Fnv32_t hash = fnv_32a_str(str, FNV1_32A_INIT);
-  Fnv32_t org_hash;
-  int counter=0;
+  unsigned int counter = 0;
   unsigned long hash2 = djb2(str);
   char * aux;
 
@@ -164,7 +172,6 @@ hash_ret hash_remove(hash * h, char * str){
     return hash_ErrParm;
 
   hash = (hash % h->capacity);
-  org_hash = hash;
 
   /* Find the bucket where the key is (if it exists) */
   while( h->elems[hash].str != NULL &&
@@ -179,23 +186,9 @@ hash_ret hash_remove(hash * h, char * str){
   if(h->elems[hash].str == NULL)
     return hash_NotFound;
 
-  /* Remove the key */
-  h->elems[hash].str = NULL;
-  h->elems[hash].removed=true;
+  /* Mark the key as removed */
+  h->elems[hash].removed = true;
   (h->size)--;
-
-  /* Reinsert a chain of elements immediately following the removed one, 
-     if such a sequence exists. */
-  /*hash = (hash + hash2) % h->capacity;
-  while( h->elems[hash].str != NULL )
-  {
-    aux = h->elems[hash].str;
-    h->elems[hash].str = NULL;
-
-    hash_insert(h, aux);
-
-    hash = (hash + hash2) % h->capacity;
-  }*/ //Not needed anymore
 
   return hash_Ok;
 }
