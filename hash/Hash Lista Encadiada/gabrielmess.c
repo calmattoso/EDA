@@ -2,15 +2,27 @@ typedef struct hash hash;
 
 
 typedef struct hash_node {
-  char * str;
-  int removido;
+	char * str;
+	CNode * next;  		
+  	Status status;
 } hash_node;
+
+typedef struct{
+	char * str;
+	CNode *next;
+
+}CNode;
 
 struct hash {
   hash_node * elems;
   unsigned int capacity;
   unsigned int size;
 };
+
+typedef enum{
+	removido,
+	colidiu
+}Status;
 
 typedef enum {
 

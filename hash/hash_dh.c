@@ -9,6 +9,7 @@
 
 typedef struct hash_node {
   char * str;
+  int  removed;
 } hash_node;
 
 struct hash {
@@ -66,9 +67,10 @@ hash_ret hash_create(hash ** h, unsigned int capacity){
   if(h_aux->elems == NULL)
     return hash_NoMem;
 
-  for(i = 0; i < capacity; i++)
+  for(i = 0; i < capacity; i++){
     h_aux->elems[i].str = NULL;
-
+    h_aux->elems[i].removed = false;
+  }
   h_aux->size = 0;
   h_aux->capacity = capacity;
 
@@ -88,6 +90,7 @@ hash_ret hash_destroy(hash * h){
 hash_ret hash_insert(hash * h, char * str){
   Fnv32_t hash = fnv_32a_str(str, FNV1_32A_INIT);
   Fnv32_t org_hash;
+  int counter=0, emptyIDX=-1;
   unsigned long hash2 = djb2(str);
 
   if(h == NULL || str == NULL)
@@ -96,7 +99,10 @@ hash_ret hash_insert(hash * h, char * str){
   hash = (hash % h->capacity);
   org_hash = hash;
 
-  while(h->elems[hash].str != NULL){
+  while(h->elems[hash].str != NULL || h_aux->elems[i].str==true){
+    /*avoid empty unused spaces*/
+    if (h->elems[hash].str != NULL || h_aux->elems[i].str==true)
+        emptyIDX=hash;
     /* check if we're trying to insert a previously inserted key */
     if( strcmp(str, h->elems[hash].str) == 0 )
       return hash_PrevInserted;
@@ -105,11 +111,16 @@ hash_ret hash_insert(hash * h, char * str){
     hash = (hash + hash2) % h->capacity;
 
     /* if we have seen all buckets, there are no empty ones */
-    if(hash == org_hash) 
+    if(counter == h->size) 
       return hash_Full;
+    counter++;
   }
   
+  if (emptyIDX!=-1) 
+    hash=emptyIDX;
+
   h->elems[hash].str = str;
+  h->elems[hash].removed=false;
   (h->size)++;
 
   return hash_Ok;
@@ -118,6 +129,7 @@ hash_ret hash_insert(hash * h, char * str){
 hash_ret hash_search(hash * h, char * str){
   Fnv32_t hash = fnv_32a_str(str, FNV1_32A_INIT);
   Fnv32_t org_hash;
+  int counter=0;
   unsigned long hash2 = djb2(str);
 
   if(h == NULL || str == NULL)
@@ -126,12 +138,12 @@ hash_ret hash_search(hash * h, char * str){
   hash = (hash % h->capacity);
   org_hash = hash;
 
-  while( h->elems[hash].str != NULL &&
-         strcmp( str, h->elems[hash].str ) != 0){
+  while( h->elems[hash].str != NULL && strcmp( str, h->elems[hash].str ) != 0){
     hash = (hash + hash2) % h->capacity;
 
-    if(hash == org_hash)
+    if(h->size == counter)
       return hash_NotFound;
+    counter++;
   }
 
   if(h->elems[hash].str == NULL)
@@ -144,6 +156,7 @@ hash_ret hash_search(hash * h, char * str){
 hash_ret hash_remove(hash * h, char * str){
   Fnv32_t hash = fnv_32a_str(str, FNV1_32A_INIT);
   Fnv32_t org_hash;
+  int counter=0;
   unsigned long hash2 = djb2(str);
   char * aux;
 
@@ -158,8 +171,9 @@ hash_ret hash_remove(hash * h, char * str){
          strcmp( str, h->elems[hash].str ) != 0){
     hash = (hash + hash2) % h->capacity;
 
-    if(hash == org_hash)
+    if(h->size == counter)
       return hash_NotFound;
+    counter++;
   }
 
   if(h->elems[hash].str == NULL)
@@ -167,11 +181,12 @@ hash_ret hash_remove(hash * h, char * str){
 
   /* Remove the key */
   h->elems[hash].str = NULL;
+  h->elems[hash].removed=true;
   (h->size)--;
 
   /* Reinsert a chain of elements immediately following the removed one, 
      if such a sequence exists. */
-  hash = (hash + hash2) % h->capacity;
+  /*hash = (hash + hash2) % h->capacity;
   while( h->elems[hash].str != NULL )
   {
     aux = h->elems[hash].str;
@@ -180,7 +195,7 @@ hash_ret hash_remove(hash * h, char * str){
     hash_insert(h, aux);
 
     hash = (hash + hash2) % h->capacity;
-  }
+  }*/ //Not needed anymore
 
   return hash_Ok;
 }
