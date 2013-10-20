@@ -1,4 +1,4 @@
-/* Open addressed hash table with unitary linear probing */
+/* Open addressed hash table with double hashing */
 #include <stdlib.h>
 #include <string.h>
 #include "hash.h"
@@ -7,8 +7,12 @@
 #define true  1
 #define false 0
 
+typedef struct hash_node {
+  char * str;
+} hash_node;
+
 struct hash {
-  char ** elems;
+  hash_node * elems;
   unsigned int capacity;
   unsigned int size;
 };
@@ -37,6 +41,10 @@ static const unsigned int prime_list[PRIME_LIST_SIZE] =
 
 static unsigned int closest_prime(unsigned int n);
 
+/* djb2 implementation from: http://www.cse.yorku.ca/~oz/hash.html */
+/* credits also go to: http://programmers.stackexchange.com/questions/49550 */
+static unsigned long djb2(unsigned char *str);
+
 /*****************************************************************************
  **** EXPORTED functions code                                            *****
  *****************************************************************************/
@@ -54,12 +62,12 @@ hash_ret hash_create(hash ** h, unsigned int capacity){
 
   capacity = closest_prime(capacity);
 
-  h_aux->elems = (char **) malloc(capacity * sizeof(char *));
+  h_aux->elems = (hash_node *) malloc(capacity * sizeof(hash_node));
   if(h_aux->elems == NULL)
     return hash_NoMem;
 
   for(i = 0; i < capacity; i++)
-    h_aux->elems[i] = NULL;
+    h_aux->elems[i].str = NULL;
 
   h_aux->size = 0;
   h_aux->capacity = capacity;
@@ -80,6 +88,7 @@ hash_ret hash_destroy(hash * h){
 hash_ret hash_insert(hash * h, char * str){
   Fnv32_t hash = fnv_32a_str(str, FNV1_32A_INIT);
   Fnv32_t org_hash;
+  unsigned long hash2 = djb2(str);
 
   if(h == NULL || str == NULL)
     return hash_ErrParm;
@@ -87,20 +96,20 @@ hash_ret hash_insert(hash * h, char * str){
   hash = (hash % h->capacity);
   org_hash = hash;
 
-  while(h->elems[hash] != NULL){
+  while(h->elems[hash].str != NULL){
     /* check if we're trying to insert a previously inserted key */
-    if( strcmp(str, h->elems[hash]) == 0 )
+    if( strcmp(str, h->elems[hash].str) == 0 )
       return hash_PrevInserted;
 
     /* move to the next bucket */
-    hash = (hash + 1) % h->capacity;
+    hash = (hash + hash2) % h->capacity;
 
     /* if we have seen all buckets, there are no empty ones */
     if(hash == org_hash) 
       return hash_Full;
   }
   
-  h->elems[hash] = str;
+  h->elems[hash].str = str;
   (h->size)++;
 
   return hash_Ok;
@@ -109,6 +118,7 @@ hash_ret hash_insert(hash * h, char * str){
 hash_ret hash_search(hash * h, char * str){
   Fnv32_t hash = fnv_32a_str(str, FNV1_32A_INIT);
   Fnv32_t org_hash;
+  unsigned long hash2 = djb2(str);
 
   if(h == NULL || str == NULL)
     return hash_ErrParm;
@@ -116,24 +126,25 @@ hash_ret hash_search(hash * h, char * str){
   hash = (hash % h->capacity);
   org_hash = hash;
 
-  while( h->elems[hash] != NULL &&
-         strcmp( str, h->elems[hash] ) != 0){
-    hash = (hash + 1) % h->capacity;
+  while( h->elems[hash].str != NULL &&
+         strcmp( str, h->elems[hash].str ) != 0){
+    hash = (hash + hash2) % h->capacity;
 
     if(hash == org_hash)
       return hash_NotFound;
   }
 
-  if(h->elems[hash] == NULL)
+  if(h->elems[hash].str == NULL)
     return hash_NotFound;
 
   return hash_Found;
 }
 
-/* Removes and reinserts all "chained" elements */
+/* removes and reinserts all "chained" elements */
 hash_ret hash_remove(hash * h, char * str){
   Fnv32_t hash = fnv_32a_str(str, FNV1_32A_INIT);
   Fnv32_t org_hash;
+  unsigned long hash2 = djb2(str);
   char * aux;
 
   if(h == NULL || str == NULL)
@@ -143,32 +154,32 @@ hash_ret hash_remove(hash * h, char * str){
   org_hash = hash;
 
   /* Find the bucket where the key is (if it exists) */
-  while( h->elems[hash] != NULL &&
-         strcmp( str, h->elems[hash] ) != 0){
-    hash = (hash + 1) % h->capacity;
+  while( h->elems[hash].str != NULL &&
+         strcmp( str, h->elems[hash].str ) != 0){
+    hash = (hash + hash2) % h->capacity;
 
     if(hash == org_hash)
       return hash_NotFound;
   }
 
-  if(h->elems[hash] == NULL)
+  if(h->elems[hash].str == NULL)
     return hash_NotFound;
 
   /* Remove the key */
-  h->elems[hash] = NULL;
+  h->elems[hash].str = NULL;
   (h->size)--;
 
   /* Reinsert a chain of elements immediately following the removed one, 
      if such a sequence exists. */
-  hash = (hash + 1) % h->capacity;
-  while( h->elems[hash] != NULL )
+  hash = (hash + hash2) % h->capacity;
+  while( h->elems[hash].str != NULL )
   {
-    aux = h->elems[hash];
-    h->elems[hash] = NULL;
+    aux = h->elems[hash].str;
+    h->elems[hash].str = NULL;
 
     hash_insert(h, aux);
 
-    hash = (hash + 1) % h->capacity;
+    hash = (hash + hash2) % h->capacity;
   }
 
   return hash_Ok;
@@ -178,7 +189,7 @@ hash_ret hash_remove(hash * h, char * str){
  **** PRIVATE functions code                                             *****
  *****************************************************************************/
 
-static unsigned int closest_prime(unsigned int n){
+unsigned int closest_prime(unsigned int n){
   int i;
 
   for(i = 0; i < PRIME_LIST_SIZE; i++)
@@ -186,4 +197,14 @@ static unsigned int closest_prime(unsigned int n){
       return prime_list[i];
 
   return n;
+}
+
+unsigned long djb2(unsigned char *str){
+  unsigned long hash = 5381;
+  int c;
+
+  while (c = *str++)
+    hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+
+  return hash;
 }

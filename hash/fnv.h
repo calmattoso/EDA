@@ -84,7 +84,7 @@
 /*
  * 32 bit FNV-0 hash type
  */
-typedef unsigned long long int Fnv32_t;
+typedef unsigned long int Fnv32_t;
 
 
 /*
@@ -121,7 +121,7 @@ enum fnv_type {
     FNV1a_32 = 3,	/* FNV-1a 32 bit hash */
     FNV0_64 = 4,	/* FNV-0 64 bit hash */
     FNV1_64 = 5,	/* FNV-1 64 bit hash */
-    FNV1a_64 = 6,	/* FNV-1a 64 bit hash */
+    FNV1a_64 = 6	/* FNV-1a 64 bit hash */
 };
 
 
