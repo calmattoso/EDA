@@ -7,12 +7,8 @@
 #define true  1
 #define false 0
 
-typedef struct hash_node {
-  char * str;
-} hash_node;
-
 struct hash {
-  hash_node * elems;
+  char ** elems;
   unsigned int capacity;
   unsigned int size;
 };
@@ -58,12 +54,12 @@ hash_ret hash_create(hash ** h, unsigned int capacity){
 
   capacity = closest_prime(capacity);
 
-  h_aux->elems = (hash_node *) malloc(capacity * sizeof(hash_node));
+  h_aux->elems = (char **) malloc(capacity * sizeof(char *));
   if(h_aux->elems == NULL)
     return hash_NoMem;
 
   for(i = 0; i < capacity; i++)
-    h_aux->elems[i].str = NULL;
+    h_aux->elems[i] = NULL;
 
   h_aux->size = 0;
   h_aux->capacity = capacity;
@@ -91,9 +87,9 @@ hash_ret hash_insert(hash * h, char * str){
   hash = (hash % h->capacity);
   org_hash = hash;
 
-  while(h->elems[hash].str != NULL){
+  while(h->elems[hash] != NULL){
     /* check if we're trying to insert a previously inserted key */
-    if( strcmp(str, h->elems[hash].str) == 0 )
+    if( strcmp(str, h->elems[hash]) == 0 )
       return hash_PrevInserted;
 
     /* move to the next bucket */
@@ -104,7 +100,7 @@ hash_ret hash_insert(hash * h, char * str){
       return hash_Full;
   }
   
-  h->elems[hash].str = str;
+  h->elems[hash] = str;
   (h->size)++;
 
   return hash_Ok;
@@ -120,21 +116,21 @@ hash_ret hash_search(hash * h, char * str){
   hash = (hash % h->capacity);
   org_hash = hash;
 
-  while( h->elems[hash].str != NULL &&
-         strcmp( str, h->elems[hash].str ) != 0){
+  while( h->elems[hash] != NULL &&
+         strcmp( str, h->elems[hash] ) != 0){
     hash = (hash + 1) % h->capacity;
 
     if(hash == org_hash)
       return hash_NotFound;
   }
 
-  if(h->elems[hash].str == NULL)
+  if(h->elems[hash] == NULL)
     return hash_NotFound;
 
   return hash_Found;
 }
 
-/* removes and reinserts all "chained" elements */
+/* Removes and reinserts all "chained" elements */
 hash_ret hash_remove(hash * h, char * str){
   Fnv32_t hash = fnv_32a_str(str, FNV1_32A_INIT);
   Fnv32_t org_hash;
@@ -147,28 +143,28 @@ hash_ret hash_remove(hash * h, char * str){
   org_hash = hash;
 
   /* Find the bucket where the key is (if it exists) */
-  while( h->elems[hash].str != NULL &&
-         strcmp( str, h->elems[hash].str ) != 0){
+  while( h->elems[hash] != NULL &&
+         strcmp( str, h->elems[hash] ) != 0){
     hash = (hash + 1) % h->capacity;
 
     if(hash == org_hash)
       return hash_NotFound;
   }
 
-  if(h->elems[hash].str == NULL)
+  if(h->elems[hash] == NULL)
     return hash_NotFound;
 
   /* Remove the key */
-  h->elems[hash].str = NULL;
+  h->elems[hash] = NULL;
   (h->size)--;
 
   /* Reinsert a chain of elements immediately following the removed one, 
      if such a sequence exists. */
   hash = (hash + 1) % h->capacity;
-  while( h->elems[hash].str != NULL )
+  while( h->elems[hash] != NULL )
   {
-    aux = h->elems[hash].str;
-    h->elems[hash].str = NULL;
+    aux = h->elems[hash];
+    h->elems[hash] = NULL;
 
     hash_insert(h, aux);
 
