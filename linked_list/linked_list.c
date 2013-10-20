@@ -23,7 +23,8 @@ ll_ret ll_create(linked_list ** l){
     return ll_NoMem;
 
   (*l)->head = NULL;
-   return ll_Ok;
+  
+  return ll_Ok;
 }
 
 ll_ret ll_destroy (linked_list * l){
