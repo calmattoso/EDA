@@ -183,8 +183,8 @@ bst_condRet remove(bst * arv, unsigned int idx){
   rchild = idx * 2 + 2;
 
   /* while the current node is not a leaf node */
-  while( arv->elems[lchild] == NULL && 
-         arv->elems[rchild] == NULL   )
+  while( arv->elems[lchild] != NULL || 
+         arv->elems[rchild] != NULL   )
   {
     /* The node has no left subtree */
     if(arv->elems[lchild] == NULL){
@@ -193,14 +193,14 @@ bst_condRet remove(bst * arv, unsigned int idx){
     }
     /* The node has or doesn't have a right subtree */
     else {
-      aux = find_max(arv,lchild);
+      aux = find_max(arv, lchild);
       swap(arv, idx, aux);
     }
         
     idx = aux;
 
-    lchild = idx * 2 + 1,
-    rchild = idx * 2 + 2 ;
+    lchild = idx * 2 + 1;
+    rchild = idx * 2 + 2;
   }
 
   arv->elems[idx] = NULL;
