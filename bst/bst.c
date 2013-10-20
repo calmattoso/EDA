@@ -9,7 +9,9 @@ struct _bst
   unsigned int capacity;  /* maximum number of elements */
 };
 
-/**** Private functions prototypes ****/
+/*****************************************************************************
+ **** PRIVATE functions prototypes                                       *****
+ *****************************************************************************/
 
 static unsigned int find_min(bst * arv, unsigned int idx);
 
@@ -19,7 +21,9 @@ static bst_condRet swap(bst * arv, unsigned int idx1, unsigned int idx2);
 
 static bst_condRet remove(bst * arv, unsigned int idx);
 
-/**** Exported functions code ****/
+/*****************************************************************************
+ **** EXPORTED functions code                                             ****
+ *****************************************************************************/
 
 bst_condRet bst_create(bst ** arv, int num_elems){
   bst * aux_bst = NULL;
@@ -131,7 +135,9 @@ bst_condRet bst_search(bst * arv, char * key){
   return bst_NotFound; 
 }
 
-/**** Private functions code ****/
+/*****************************************************************************
+ **** PRIVATE functions code                                              ****
+ *****************************************************************************/
 
 unsigned int find_min(bst * arv, unsigned int idx){
   unsigned int lchild = idx * 2 + 1;
