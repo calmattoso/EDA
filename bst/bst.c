@@ -55,6 +55,8 @@ bst_condRet bst_destroy(bst * arv){
 
   free(arv->elems);
   free(arv);
+
+  return bst_Ok;
 }
 
 bst_condRet bst_insert(bst * arv, char * key){
