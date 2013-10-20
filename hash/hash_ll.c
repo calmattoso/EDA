@@ -10,7 +10,9 @@ struct hash
   unsigned int capacity;
 };
 
-/**** Private data  ****/
+/*****************************************************************************
+ **** PRIVATE data                                                       *****
+ *****************************************************************************/
 
 #define PRIME_LIST_SIZE 32
 
@@ -26,11 +28,15 @@ static const unsigned int prime_list[PRIME_LIST_SIZE] =
   3221225473ul, 4294967291ul
 };
 
-/**** Private functions prototypes ****/
+/*****************************************************************************
+ **** PRIVATE functions prototypes                                       *****
+ *****************************************************************************/
 
 static unsigned int closest_prime(unsigned int n);
 
-/**** Exported functions code ****/
+/*****************************************************************************
+ **** EXPORTED functions code                                            *****
+ *****************************************************************************/
 
 hash_ret hash_create(hash ** h, unsigned int capacity){
   hash * h_aux = NULL;
@@ -124,7 +130,10 @@ hash_ret hash_remove(hash * h,  char * str){
   return hash_Ok;
 }
 
-/**** Private functions code ****/
+/*****************************************************************************
+ **** PRIVATE functions code                                             *****
+ *****************************************************************************/
+
 static unsigned int closest_prime(unsigned int n){
   int i;
 
