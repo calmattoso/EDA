@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "..\\linked_list\\linked_list.h"
+#include "..//linked_list//linked_list.h"
 #include "hash.h"
 #include "fnv.h"
 

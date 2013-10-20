@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "..\\avl\\avl.h"
+#include "..//avl//avl.h"
 
 #define OP_OK         0
 #define PREV_INSERTED 1
@@ -26,7 +26,7 @@ int main(){
   scanf(" %u %u", &n_lines, &max_val);
 
   aloc.libavl_malloc = avl_malloc;
-  aloc.libavl_free   = avl_free;  /* USA USA USA */
+  aloc.libavl_free   = avl_free;  
 
   /* Create the AVL tree */
   avl_tree = avl_create(compare_str, NULL, &aloc);
@@ -49,8 +49,8 @@ int main(){
           printf("ERROR: could not insert %s\n", set);
           exit( 1 );
         }
-
         break;
+
       /* Search */
       case 'b':
         ret = search(avl_tree, set);
@@ -58,8 +58,8 @@ int main(){
           printf("b  FND  %s\n", set);
         else
           printf("b ~FND  %s\n", set);
-
         break;
+
       /* Removal */
       case 'r':
         ret = delete(avl_tree, set); 
@@ -67,9 +67,9 @@ int main(){
           printf("r   OK  %s\n", set);
         else
           printf("r ~FND  %s\n", set);
-
         break;
-      /* Wrong code */
+
+      /* Wrong input */
       default:
         printf("ERROR: Wrong input at line %u!\n", i+1);
         exit(1);
