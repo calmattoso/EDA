@@ -1,0 +1,22 @@
+
+STATISTICS (inst60k9.txt)
+==========
+
+ Insertion Total Time: 10.091000
+	Insertion Averarge Time: 0.000002
+ Search Total Time:    0.000000
+	Search Averarge Time:    0.000000
+ Remove Total Time:    0.000000
+	Remove Averarge Time:    0.000000
+Total Running time:    10.091000
+
+STATISTICS (inst60k9b.txt)
+==========
+
+ Insertion Total Time: 10.783000
+	Insertion Averarge Time: 0.000002
+ Search Total Time:    2.279000
+	Search Averarge Time:    0.000001
+ Remove Total Time:    6.355000
+	Remove Averarge Time:    0.000002
+Total Running time:    19.417000
