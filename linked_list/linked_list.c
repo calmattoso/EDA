@@ -88,6 +88,7 @@ ll_ret ll_remove(linked_list * l, char * key){
   else
     return ll_NotFound;
   
+  free(cur->key);
   free(cur);
 
   return ll_Ok;
