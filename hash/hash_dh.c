@@ -52,7 +52,7 @@ static unsigned long djb2(char *str);
 
 hash_ret hash_create(hash ** h, unsigned int capacity){
   hash * h_aux = (hash *) malloc(sizeof(hash));
-  int i = 0;
+  unsigned int i = 0;
 
   if(h == NULL || capacity < 0)
     return hash_ErrParm;
@@ -96,7 +96,8 @@ hash_ret hash_destroy(hash * h){
 
 hash_ret hash_insert(hash * h, char * str){
   Fnv32_t hash = fnv_32a_str(str, FNV1_32A_INIT);
-  unsigned int counter = 0, first_empty = -1;
+  unsigned int counter = 0;
+  int first_empty = -1;
   unsigned long hash2 = djb2(str);
 
   if(h == NULL || str == NULL)
