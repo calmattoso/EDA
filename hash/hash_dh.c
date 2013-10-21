@@ -96,7 +96,7 @@ hash_ret hash_destroy(hash * h){
 
 hash_ret hash_insert(hash * h, char * str){
   Fnv32_t hash = fnv_32a_str(str, FNV1_32A_INIT);
-  unsigned int counter = 0;
+  Fnv32_t org_hash;
   int first_empty = -1;
   unsigned long hash2 = djb2(str);
 
@@ -104,14 +104,20 @@ hash_ret hash_insert(hash * h, char * str){
     return hash_ErrParm;
 
   hash = (hash % h->capacity);
+  org_hash = hash;
 
   /* Find an empty bucket */
   while( h->elems[hash].str != NULL )
   {
     /* If the current bucket already has the key being inserted */
     if( strcmp( str, h->elems[hash].str ) == 0){
-      h->elems[hash].removed = false;
-      return hash_PrevInserted;
+      if(h->elems[hash].removed == true){
+        free(str);
+        h->elems[hash].removed = false;
+        return hash_Ok;
+      }
+      else 
+        return hash_PrevInserted;
     }
 
     /* Find the first empty bucket */
@@ -123,14 +129,14 @@ hash_ret hash_insert(hash * h, char * str){
     hash = (hash + hash2) % h->capacity;
 
     /* if we have seen all buckets, there are no empty ones */
-    if(counter == h->size) 
+    if(hash == org_hash) 
       break;
-    counter++;
   }
   
   if ( first_empty != -1 ) 
     hash = first_empty;
-  else if( counter == h->size)
+  else if( hash == org_hash && 
+          h->elems[hash].str != NULL )
     return hash_Full;
 
   if(h->elems[hash].str != NULL)
@@ -145,22 +151,22 @@ hash_ret hash_insert(hash * h, char * str){
 
 hash_ret hash_search(hash * h, char * str){
   Fnv32_t hash = fnv_32a_str(str, FNV1_32A_INIT);
-  unsigned int counter = 0;
+  Fnv32_t org_hash;
   unsigned long hash2 = djb2(str);
 
   if(h == NULL || str == NULL)
     return hash_ErrParm;
  
   hash = (hash % h->capacity);
+  org_hash = hash;
 
   while( h->elems[hash].str != NULL &&
          strcmp( str, h->elems[hash].str ) != 0)
   {
     hash = (hash + hash2) % h->capacity;
 
-    if(h->size == counter)
+    if(hash == org_hash)
       return hash_NotFound;
-    counter++;
   }
 
   if(h->elems[hash].str == NULL    ||
@@ -172,7 +178,7 @@ hash_ret hash_search(hash * h, char * str){
 
 hash_ret hash_remove(hash * h, char * str){
   Fnv32_t hash = fnv_32a_str(str, FNV1_32A_INIT);
-  unsigned int counter = 0;
+  Fnv32_t org_hash;
   unsigned long hash2 = djb2(str);
   char * aux;
 
@@ -180,18 +186,20 @@ hash_ret hash_remove(hash * h, char * str){
     return hash_ErrParm;
 
   hash = (hash % h->capacity);
+  org_hash = hash;
 
   /* Find the bucket where the key is (if it exists) */
   while( h->elems[hash].str != NULL &&
          strcmp( str, h->elems[hash].str ) != 0){
     hash = (hash + hash2) % h->capacity;
 
-    if(h->size == counter)
+    if(hash == org_hash)
       return hash_NotFound;
-    counter++;
   }
 
-  if(h->elems[hash].str == NULL)
+  if(h->elems[hash].str == NULL || 
+    ( strcmp( str, h->elems[hash].str ) == 0 &&
+      h->elems[hash].removed == true ))
     return hash_NotFound;
 
   /* Mark the key as removed */
