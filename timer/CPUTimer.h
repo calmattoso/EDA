@@ -13,7 +13,6 @@ class CPUTimer
     CPUTimer();
 
 
-
     // Retorna o tempo (em segs e msegs) de CPU cronometrado para uma rotina.
     // Se apenas uma cronometragem foi realizada, entao os valores retornados
     // por getCPUCurrSecs() e getCPUTtotalSecs sao iguais.
