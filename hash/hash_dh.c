@@ -44,7 +44,7 @@ static unsigned int closest_prime(unsigned int n);
 
 /* djb2 implementation from: http://www.cse.yorku.ca/~oz/hash.html */
 /* credits also go to: http://programmers.stackexchange.com/questions/49550 */
-static unsigned long djb2(unsigned char *str);
+static unsigned long djb2(char *str);
 
 /*****************************************************************************
  **** EXPORTED functions code                                            *****
@@ -79,8 +79,14 @@ hash_ret hash_create(hash ** h, unsigned int capacity){
 }
 
 hash_ret hash_destroy(hash * h){
+  unsigned int i = 0;
+
   if(h == NULL)
     return hash_ErrParm;
+
+  for(i = 0; i < h->capacity; i++)
+    if(h->elems[i].str != NULL)
+      free(h->elems[i].str);
 
   free(h->elems);
   free(h);
@@ -126,7 +132,8 @@ hash_ret hash_insert(hash * h, char * str){
   else if( counter == h->size)
     return hash_Full;
 
-  /* free(h->elems[hash].str); */
+  if(h->elems[hash].str != NULL)
+    free(h->elems[hash].str); 
 
   h->elems[hash].str = str;
   h->elems[hash].removed = false;
@@ -207,7 +214,7 @@ unsigned int closest_prime(unsigned int n){
   return n;
 }
 
-unsigned long djb2(unsigned char *str){
+unsigned long djb2(char *str){
   unsigned long hash = 5381;
   int c;
 

@@ -82,7 +82,7 @@ hash_ret hash_destroy(hash * h){
 
 hash_ret hash_insert(hash * h,  char * str){
   Fnv32_t hash = 0;
-  ll_ret ret = 0;
+  ll_ret ret = ll_Ok;
 
   if(h == NULL || str == NULL)
     return hash_ErrParm;

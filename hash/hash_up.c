@@ -68,9 +68,17 @@ hash_ret hash_create(hash ** h, unsigned int capacity){
 }
 
 hash_ret hash_destroy(hash * h){
+  int i;
+
   if(h == NULL)
     return hash_ErrParm;
 
+  /* Free all the strings */
+  for(i = 0; i < h->capacity; i++)
+    if(h->elems[i] != NULL)
+      free(h->elems[i]);
+
+  /* Free the array and the table */
   free(h->elems);
   free(h);
 
@@ -155,6 +163,7 @@ hash_ret hash_remove(hash * h, char * str){
     return hash_NotFound;
 
   /* Remove the key */
+  free(h->elems[hash]);
   h->elems[hash] = NULL;
   (h->size)--;
 
