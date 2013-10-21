@@ -163,16 +163,16 @@ int main(){
 
   printf("\n\nSTATISTICS\n==========\n\n");
   /* Insertion */
-  printf(" Insertion Total Time: %lf\n\tInsertion Averarge Time: %lf\n",
-         insTime.getCPUTotalSecs(), (insTime.getCPUTotalSecs() / a) );
+  printf(" Insertion Total Time: %lfs\n\tInsertion Average Time: %.12lfms\n",
+         insTime.getCPUTotalSecs(), (insTime.getCPUTotalSecs() / a) * 1000 );
   /* Search */
-  printf(" Search Total Time:    %lf\n\tSearch Averarge Time:    %lf\n",
-         searchTime.getCPUTotalSecs(), (searchTime.getCPUTotalSecs() / b) );
+  printf(" Search Total Time:    %lfs\n\tSearch Average Time:    %.12lfms\n",
+         searchTime.getCPUTotalSecs(), (searchTime.getCPUTotalSecs() / b) * 1000 );
   /* Removal */
-  printf(" Remove Total Time:    %lf\n\tRemove Averarge Time:    %lf\n", 
-         remTime.getCPUTotalSecs(), (remTime.getCPUTotalSecs() / c) );
+  printf(" Remove Total Time:    %lfs\n\tRemove Average Time:    %.12lfms\n", 
+         remTime.getCPUTotalSecs(), (remTime.getCPUTotalSecs() / c) * 1000 );
   /* Total running time */
-  printf("Total Running time:    %lf\n", ( remTime.getCPUTotalSecs() +  
+  printf("Total Running time:    %lfs\n", ( remTime.getCPUTotalSecs() +  
          searchTime.getCPUTotalSecs() + insTime.getCPUTotalSecs() ) );
  
   avl_destroy(avl_tree, destroy_str);
