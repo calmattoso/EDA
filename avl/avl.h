@@ -51,7 +51,7 @@ void avl_free (struct libavl_allocator *, void *);
 
 /* Maximum AVL height. */
 #ifndef AVL_MAX_HEIGHT
-#define AVL_MAX_HEIGHT 32
+#define AVL_MAX_HEIGHT 64
 #endif
 
 /* Tree data structure. */
