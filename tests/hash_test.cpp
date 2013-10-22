@@ -114,14 +114,17 @@ int main(){
       case 'i':
         ret = insert(h, set);
 
-        if( ret  == OP_OK )
-          printf("i   OK  %s\n", set);
-        else if( ret == PREV_INSERTED )
-          printf("i PREV  %s\n", set);
-        else if( ret == HASH_FULL) {
-          printf("ERROR: Hash if full!\n\tcould not insert %s\n", set);
-          exit( 1 );
-        }
+        #ifdef _LOG
+          if( ret  == OP_OK )
+            printf("i   OK  %s\n", set);
+          else if( ret == PREV_INSERTED )
+            printf("i PREV  %s\n", set);
+          else if( ret == HASH_FULL) {
+            printf("ERROR: Hash if full!\n\tcould not insert %s\n", set);
+            exit( 1 );
+          }
+        #endif
+
         a++;
 
       break;
@@ -129,10 +132,13 @@ int main(){
       case 'b':
         ret = search(h, set);
 
-        if( ret == OP_OK )
-          printf("b  FND  %s\n", set);
-        else
-          printf("b ~FND  %s\n", set);
+        #ifdef _LOG
+          if( ret == OP_OK )
+            printf("b  FND  %s\n", set);
+          else
+            printf("b ~FND  %s\n", set);
+        #endif
+
         b++;
 
       break;
@@ -140,10 +146,13 @@ int main(){
       case 'r':
         ret = _delete(h, set); 
 
-        if( ret == OP_OK )
-          printf("r   OK  %s\n", set);
-        else
-          printf("r ~FND  %s\n", set);
+        #ifdef _LOG
+          if( ret == OP_OK )
+            printf("r   OK  %s\n", set);
+          else
+            printf("r ~FND  %s\n", set);
+        #endif
+        
         c++;
 
       break;

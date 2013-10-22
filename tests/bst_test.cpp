@@ -102,37 +102,45 @@ int main(){
       /* Insertion */
       case 'i':
         ret = insert(h, set);
+        
+        #ifdef _LOG
+          if( ret  == OP_OK )
+            printf("i   OK  %s\n", set);
+          else if( ret == PREV_INSERTED )
+            printf("i PREV  %s\n", set);
+          else if( ret == BST_FULL) {
+            printf("ERROR: bst if full!\n\tcould not insert %s\n", set);
+            exit( 1 );
+          }
+        #endif
 
-        if( ret  == OP_OK )
-          printf("i   OK  %s\n", set);
-        else if( ret == PREV_INSERTED )
-          printf("i PREV  %s\n", set);
-        else if( ret == BST_FULL) {
-          printf("ERROR: bst if full!\n\tcould not insert %s\n", set);
-          exit( 1 );
-        }
         a++;
 
       break;
       /* Search */
       case 'b':
         ret = search(h, set);
-
-        if( ret == OP_OK )
-          printf("b  FND  %s\n", set);
-        else
-          printf("b ~FND  %s\n", set);
+        
+        #ifdef _LOG
+          if( ret == OP_OK )
+            printf("b  FND  %s\n", set);
+          else
+            printf("b ~FND  %s\n", set);
+        #endif
+        
         b++;
 
       break;
       /* Removal */
       case 'r':
         ret = _delete(h, set); 
+        #ifdef _LOG
+          if( ret == OP_OK )
+            printf("r   OK  %s\n", set);
+          else
+            printf("r ~FND  %s\n", set);
+        #endif
 
-        if( ret == OP_OK )
-          printf("r   OK  %s\n", set);
-        else
-          printf("r ~FND  %s\n", set);
         c++;
 
       break;
