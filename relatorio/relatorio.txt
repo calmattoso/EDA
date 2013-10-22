@@ -1,0 +1,26 @@
+Comparando operações comuns em função do tempo em estruturas de dados avançadas
+
+Carlos Mattoso, Gabriel Barros e Leonardo Kaplan
+
+Abstract
+
+Nossa motivação ao desenvolver esse projeto foi comparar as operações mais comuns (inserção, remoção e busca) em diferentes estruturas de dados avançadas a fim de determinar a mais eficiente em termos de tempo de execução.
+As estruturas escolhidas foram tabelas hash, arvore binária simples e arvores binárias balanceadas. 
+
+Introduction
+Para determinar a estrutura de dados mais eficiente em termos de velocidade de execução escolhemos representantes dos diversos paradigmas:
+Tabelas hash, com diferentes tratamentos de colisão; Arvores de busca binaria simples e Arvores de busca balanceadas.
+Para comparar as diferentes estruturas comparamos os tempos de inserção, remoção e busca nas estruturas em 3 diferentes entradas: 
+Uma com x operacoes, sendo elas majoritariamente y; 
+Outra com x1 operacoes, sendo elas...; 
+E por fim uma com x2 operacoes, sendo elas...; 
+Era esperado que a Hash com encadeamento simples fosse a mais rapida em todas as entradas.
+
+Hash
+
+Variamos as tabelas hash em função do tratamento de colisão, aplicando passo simples, hashing duplo ou criando uma lista encadeada. 
+
+Arvores
+
+A arvore binaria simples foi  
+
