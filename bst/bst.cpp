@@ -59,8 +59,7 @@ bst_ret bst_create(bst ** arv, int num_elems){
 
 bst_ret bst_destroy(bst * arv){
   unsigned int i = 0;
-  stack<node *> nodes;
-  
+    
   if(arv == NULL || arv->head == NULL)
     return bst_ErrParm;  
 
