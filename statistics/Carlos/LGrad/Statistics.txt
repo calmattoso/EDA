@@ -1,0 +1,71 @@
+ 
+
+		AVL 
+
+STATISTICS
+==========
+
+ Insertion Total Time: 13.759288s
+	Insertion Average Time: 0.002132127493ms
+ Search Total Time:    2.511616s
+	Search Average Time:    0.001475306340ms
+ Remove Total Time:    7.207246s
+	Remove Average Time:    0.002013995547ms
+Total Running time:    23.478151s
+
+
+
+		BST
+
+STATISTICS
+==========
+
+ Insertion Total Time: 15.288098s
+	Insertion Average Time: 0.002369030548ms
+ Search Total Time:    3.338421s
+	Search Average Time:    0.001960966191ms
+ Remove Total Time:    7.956051s
+	Remove Average Time:    0.002223241838ms
+Total Running time:    26.582570s
+
+
+		Double Hash
+
+STATISTICS
+==========
+
+ Insertion Total Time: 8.112052s 
+	Insertion Average Time: 0.001257036617ms
+ Search Total Time:    2.043613s
+	Search Average Time:    0.001200404538ms
+ Remove Total Time:    5.272834s
+	Remove Average Time:    0.001473442630ms
+Total Running time:    15.428499s
+
+
+		Hash Linked List
+
+STATISTICS
+==========
+
+ Insertion Total Time: 8.127652s
+	Insertion Average Time: 0.001259453995ms
+ Search Total Time:    2.090413s
+	Search Average Time:    0.001227894718ms
+ Remove Total Time:    3.978025s
+	Remove Average Time:    0.001111620919ms
+Total Running time:    14.196091s
+
+
+		Hash Single Pass
+
+STATISTICS
+==========
+
+ Insertion Total Time: 7.129246s
+	Insertion Average Time: 0.001104741796ms
+ Search Total Time:    2.059213s
+	Search Average Time:    0.001209567931ms
+ Remove Total Time:    4.009226s
+	Remove Average Time:    0.001120339514ms
+Total Running time:    13.197685s
