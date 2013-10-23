@@ -1,106 +1,82 @@
-#include <stdio.h>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include "..//avl//avl.h"
+#include "..//btree//btree.h"
 #include "..//timer//CPUTimer.h"
 
 #define _LOG
- 
 #define OP_OK         0
 #define PREV_INSERTED 1
 #define NOT_FOUND     2
+#define HASH_FULL     3
+
+KBTREE_INIT(str, char *, kb_str_cmp);
 
 char set[200];
 CPUTimer insTime;
 CPUTimer searchTime;
 CPUTimer remTime;
  
-int _delete(struct avl_table * avl_tree, char * str){
-  void * ret = NULL;
+int insert(kbtree_t(str) * h, char * s){
+  char * new_s = (char *) malloc(strlen(s) + 1);
  
-  remTime.start();
-    ret = avl_delete(avl_tree, str);
-  remTime.stop();
-
-  if(ret == NULL)
-    return NOT_FOUND;
- 
-  free( ret );
-  return OP_OK;  
-} 
- 
-int insert(struct avl_table * avl_tree, char * str){
-  void ** ret = NULL;
-  char * new_str = (char *) malloc(strlen(str) + 1);
- 
-  if(new_str == NULL){
+  if(new_s == NULL){
     printf("ERROR: No memory for new string!\n");
     exit(1);
   }
  
-  strcpy(new_str, str);
+  strcpy(new_s, s);
  
-  /* Insert into AVL */
+  /* Insert into Hash Table */
   insTime.start();
-    ret = avl_probe(avl_tree, new_str);
+    if(kb_get(str, h, new_s) != 0){
+      insTime.stop();
+      return PREV_INSERTED;
+    }
+
+    kb_put(str, h, new_s);
   insTime.stop();
  
-  if(ret == NULL){
-    printf("ERROR: No memory for new node!\n");
-    exit(1);
-  }
-  /* We could insert the set */
-  if(*ret == new_str)
-    return OP_OK;
-  /* We had already inserted the set */
-  if(*ret != NULL){
-    free(new_str);
-    return PREV_INSERTED;
-  }
- 
-  /* Something weird happened */
-  return -1; 
+  return OP_OK;
 }
 
-int search(struct avl_table * avl_tree, char * str){
-  void * ret = NULL;
- 
+int search(kbtree_t(str) * h, char * s){
   searchTime.start();
-    ret = avl_find(avl_tree, str);
+    if( kb_get(str, h, s) != 0){
+      searchTime.stop();
+      return OP_OK;
+    }
   searchTime.stop();
-
-  if(ret != NULL)
-    return OP_OK;
  
   return NOT_FOUND;
 }
 
-int compare_str (const void * key1, const void * key2, void * param){
-  const char * a = (const char *) key1;
-  const char * b = (const char *) key2;
- 
-  return strcmp(a, b);
-}
+int _delete(kbtree_t(str) * h, char * s){
+  remTime.start();
+    if(kb_get(str, h, s) == 0){
+      remTime.stop();
+      return NOT_FOUND;
+    }
 
-void destroy_str (void * key, void * param){
-  free( (char *) key);
-}
+    kb_del(str, h, s);
+  remTime.stop();
+ 
+  return OP_OK;  
+} 
 
 int main(){
   unsigned int n_lines, max_val, i, ret, a = 0, b = 0, c = 0; 
   char op;
-  struct avl_table * avl_tree = NULL;
-  struct libavl_allocator aloc;
- 
-  scanf(" %u %u", &n_lines, &max_val);
- 
-  aloc.libavl_malloc = avl_malloc;
-  aloc.libavl_free   = avl_free;  /* USA USA USA */
- 
-  /* Create the AVL tree */
-  avl_tree = avl_create(compare_str, NULL, &aloc);
-  if(avl_tree == NULL)
+  kbtree_t(str) *h;
+   
+  scanf(" %u %u", &n_lines, &max_val); 
+  
+  /* Create the Btree */
+  h = kb_init(str, n_lines);
+  if(h == NULL){
+    printf("ERROR: Could not create BTree!\n");
     exit(1);
+  }
 
   /* Intiatializing time variables */
   insTime.reset();
@@ -114,15 +90,15 @@ int main(){
     switch( op ){
       /* Insertion */
       case 'i':
-        ret = insert(avl_tree, set);
+        ret = insert(h, set);
 
         #ifdef _LOG
           if( ret  == OP_OK )
             printf("i   OK  %s\n", set);
           else if( ret == PREV_INSERTED )
             printf("i PREV  %s\n", set);
-          else {
-            printf("ERROR: could not insert %s\n", set);
+          else if( ret == HASH_FULL) {
+            printf("ERROR: Hash if full!\n\tcould not insert %s\n", set);
             exit( 1 );
           }
         #endif
@@ -132,7 +108,7 @@ int main(){
       break;
       /* Search */
       case 'b':
-        ret = search(avl_tree, set);
+        ret = search(h, set);
 
         #ifdef _LOG
           if( ret == OP_OK )
@@ -146,7 +122,7 @@ int main(){
       break;
       /* Removal */
       case 'r':
-        ret = _delete(avl_tree, set); 
+        ret = _delete(h, set); 
 
         #ifdef _LOG
           if( ret == OP_OK )
@@ -186,7 +162,7 @@ int main(){
   printf("Total Running time:    %lfs\n", ( remTime.getCPUTotalSecs() +  
          searchTime.getCPUTotalSecs() + insTime.getCPUTotalSecs() ) );
  
-  avl_destroy(avl_tree, destroy_str);
+  __kb_destroy(h);
  
   return 0;
 }
