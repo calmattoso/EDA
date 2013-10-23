@@ -3,8 +3,6 @@
 #include <cstring>
 #include "..//avl//avl.h"
 #include "..//timer//CPUTimer.h"
-
-#define _LOG
  
 #define OP_OK         0
 #define PREV_INSERTED 1
