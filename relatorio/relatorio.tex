@@ -163,20 +163,27 @@ No caso de árvores testamos dois tipos:
 
 
 %-----------------------------------------------------------------------
+\section{Análise dos resultados}
+	Os testes foram executados em uma máquina com Intel i7 com clock travado em 0.77 GHz com 4 Gb de RAM.
+	A análise foi feita sobre os resultados em anexo.%Ou na seção 4, resultados.
+	No quesito inserção a estrutura mais rápida foi o Hash simples, como esperado, pois só necessita de um passo para os casos de colisão, enquanto o hash duplo seguiu como o segundo melhor, já que para colisões ele roda um operação de hash a mais. Por fim, o hash de listas encadeadas foi o pior, pois necessita de operações de realocação de memória para resolução de colisão, além disso, vale mencionar que as funções do módulo hash de listas encadeadas utiliza um módulo externo de listas encadeadas, o que influencia negativamente no seu desempenho.
+	No quesito busca
 
+%-----------------------------------------------------
 \section{Results}
 
 \begin{table}[H]
-\caption{Example table}
+\caption{bst}
 \centering
 \begin{tabular}{llr}
 \toprule
-\multicolumn{2}{c}{Name} \\
-\cmidrule(r){1-2}
-First name & Last Name & Grade \\
+\multicolumn{2}{c}{BST} \\
+\cmidrule(r){2}
+Inserção & Remoção & Busca \\
+\cmidrule(r){2}
+Média & Total & Média & Total & Média & Total\\
 \midrule
-John & Doe & $7.5$ \\
-Richard & Miles & $2$ \\
+John & Doe & $7.5$ & Richard & Miles & $2$ \\
 \bottomrule
 \end{tabular}
 \end{table}
