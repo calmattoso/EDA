@@ -134,13 +134,13 @@ Variamos as tabelas Hash em função do tratamento de colisão, aplicando:
 Em todos os casos a tabela Hash foi representada como um grande vetor de ponteiros para strings que representavam os conjuntos lidos. Embora esta representação tenha exigido comparação de strings, uma operação não muito eficiente, isto não afeta o resultado dos testes pois teve de ser feito para todas as estruturas. 
 
 Adotamos duas estratégias para minimizar o número de colisões:
-
-\subsection{ Uso de boas funções de hash para string: }
+\begin{compactitem}
+\item Uso de boas funções de hash para string: 
    fnv1a e djb2, testadas por muitos pesquisadores e em aplicações do mundo real. Ambas garantem uma distribuição de qualidade satisfatória, minimizando significativamente o número de colisões.
 
-\subsection{ Criação de tabelas de tamanho mais que o suficiente:}
+\item Criação de tabelas de tamanho mais que o suficiente:
    Como sabemos desde o início a quantidade de elementos máxima que leríamos, podemos criar uma tabela de tamanho maior até mesmo que o necessário, reduzindo as chances de ocorrência de colisões. Em razão disto não tivemos que implementar algoritmos de ajuste de tamanho da tabela, no caso de ela não conseguir comportar mais elementos ou ter atingido um fator de carga muito alto. De fato, numa aplicação de mundo real isto pode nem sempre ser possível.
-
+\end{compactitem}
 
 
 
