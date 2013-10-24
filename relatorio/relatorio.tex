@@ -56,14 +56,14 @@
 \pagestyle{fancy} % All pages have headers and footers
 \fancyhead{} % Blank out the default header
 \fancyfoot{} % Blank out the default footer
-\fancyhead[C]{Relatorio EDA $\bullet$ Outubro 2013} % Custom header text
+\fancyhead[C]{Relatório EDA $\bullet$ Outubro 2013} % Custom header text
 \fancyfoot[RO,LE]{\thepage} % Custom footer text
 
 %----------------------------------------------------------------------------------------
 %	TITLE SECTION
 %----------------------------------------------------------------------------------------
 
-\title{\vspace{-15mm}\fontsize{24pt}{10pt}\selectfont\textbf{Comparando operações comuns em função do tempo em estruturas de dados avançadas}} % Article title
+\title{\vspace{-15mm}\fontsize{24pt}{10pt}\selectfont\textbf{Comparando operações comuns em função do tempo em Estruturas de Dados Avançadas}} % Article title
 
 \author{
 \large
@@ -89,7 +89,7 @@
 
 \noindent 
 Nossa motivação ao desenvolver este projeto foi comparar as operações mais comuns (inserção, remoção e busca) em diferentes estruturas de dados avançadas a fim de determinar a mais eficiente em termos de tempo de execução.
-As estruturas escolhidas foram tabelas Hash, Arvore Binária simples e Arvores Binárias balanceadas. 
+As estruturas escolhidas foram tabelas Hash, Árvore Binária simples e Árvores Binárias balanceadas. 
 
 \end{abstract}
 
@@ -104,8 +104,11 @@ As estruturas escolhidas foram tabelas Hash, Arvore Binária simples e Arvores B
 \lettrine[nindent=0em,lines=3]{P}ara determinar a estrutura de dados mais eficiente em termos de velocidade de execução escolhemos representantes dos diversos paradigmas:
 Tabelas hash, com diferentes tratamentos de colisão; Arvores de busca binaria simples e Arvores de busca balanceadas.
 Para comparar as diferentes estruturas comparamos os tempos de inserção, remoção e busca nas estruturas em 2 tipos diferentes de entradas:
-- Uma com várias operações de inserção (possivelmente de valores já inseridos)
-- Outra com as mesmas inserções, seguidas de operações de busca, remoção e até inserção. 
+\begin{compactitem}
+\item Uma com várias operações de inserção (possivelmente de valores já inseridos)
+\item Outra com as mesmas inserções, seguidas de operações de busca, remoção e até inserção. 
+\end{compactitem}
+
 Era esperado que a Hash de passo unitário fosse a mais rápida em todas as entradas, destacando-se principalmente em busca. 
 
 
@@ -117,21 +120,27 @@ Era esperado que a Hash de passo unitário fosse a mais rápida em todas as entr
 Variamos as tabelas Hash em função do tratamento de colisão, aplicando:
 
 \subsection{ Passo fixo unitário }
-    Aqui, ao inserirmos verificamos se a posição dada pela função Hash está livre e, caso esteja, inserimos o elemento; em caso de colisão, verificamos a posição seguinte e assim em diante até encontrar algum bucket vazio. Na inserção garantimos que não ocorrerá inserção de duplicatas.
-    No caso da busca, segue-se o mesmo processo, comparando-se o elemento candidato ao que estamos buscando e se forem iguais, a busca foi bem sucedida. Caso atinja-se uma posição vazia indica-se que o elemento não encontra-se na árvore.
-    Finalmente, para a remoção é necessária uma operação mais custosa. Caso o elemento a ser removido encontre-se na tabela, é necessário reinserir, caso exista, a sequência contínua de elementos que vem imediatamente após o removido.
+\indent Aqui, ao inserirmos verificamos se a posição dada pela função Hash está livre e, caso esteja, inserimos o elemento; em caso de colisão, verificamos a posição seguinte e assim em diante até encontrar algum bucket vazio. Na inserção garantimos que não ocorrerá inserção de duplicatas.
+
+\indent No caso da busca, segue-se o mesmo processo, comparando-se o elemento candidato ao que estamos buscando e se forem iguais, a busca foi bem sucedida. Caso atinja-se uma posição vazia indica-se que o elemento não encontra-se na árvore.
+
+\indent Finalmente, para a remoção é necessária uma operação mais custosa. Caso o elemento a ser removido encontre-se na tabela, é necessário reinserir, caso exista, a sequência contínua de elementos que vem imediatamente após o removido.
 
 \subsection{ Hashing duplo, definindo o tamanho do passo com outro hash }
-   Os procedimentos aqui são bem parecidos ao tipo anterior. No caso da inserção a diferença é que percorre-se a tabela com um passo definido por uma outra hash function. Também, por utilizarmos remoção "lazy" neste caso (afinal, não seria fácil achar quem pode ter colidido com o elemento a ser removido), a inserção é quem esvazia posições marcadas como removidas substituindo-nas pelo novo elemento. A inserção continua garantindo que elementos que tenham uma cópia na tabela não serão inseridos.
-   A busca segue os mesmos passos que no tipo anterior, com a diferença do passo.
-   Finalmente, a remoção como já dito é feita de modo "lazy", só ocorrendo de fato na inserção.
+\indent Os procedimentos aqui são bem parecidos ao tipo anterior. No caso da inserção a diferença é que percorre-se a tabela com um passo definido por uma outra hash function. Também, por utilizarmos remoção "lazy" neste caso (afinal, não seria fácil achar quem pode ter colidido com o elemento a ser removido), a inserção é quem esvazia posições marcadas como removidas substituindo-nas pelo novo elemento. A inserção continua garantindo que elementos que tenham uma cópia na tabela não serão inseridos.
+
+\indent A busca segue os mesmos passos que no tipo anterior, com a diferença do passo.
+
+\indent Finalmente, a remoção como já dito é feita de modo "lazy", só ocorrendo de fato na inserção.
 
 \subsection{ Encadeamento externo através de lista encadeada }
-   Neste método, cada bucket da tabela é uma lista encadeada. Assim, caso ocorra alguma colisão basta inserir na lista. 
-   A busca neste caso deve ser feita passando-se por cada elemento da lista encadeada.
-   Finalmente, a remoção de fato ocorre caso o elemento encontre-se em sua respectiva lista.
+\indent Neste método, cada bucket da tabela é uma lista encadeada. Assim, caso ocorra alguma colisão basta inserir na lista.
+ 
+\indent A busca neste caso deve ser feita passando-se por cada elemento da lista encadeada.
 
-Em todos os casos a tabela Hash foi representada como um grande vetor de ponteiros para strings que representavam os conjuntos lidos. Embora esta representação tenha exigido comparação de strings, uma operação não muito eficiente, isto não afeta o resultado dos testes pois teve de ser feito para todas as estruturas. 
+\indent Finalmente, a remoção de fato ocorre caso o elemento encontre-se em sua respectiva lista.
+
+\indent Em todos os casos a tabela Hash foi representada como um grande vetor de ponteiros para strings que representavam os conjuntos lidos. Embora esta representação tenha exigido comparação de strings, uma operação não muito eficiente, isto não afeta o resultado dos testes pois teve de ser feito para todas as estruturas. 
 
 Adotamos duas estratégias para minimizar o número de colisões:
 \begin{compactitem}
@@ -151,61 +160,93 @@ Adotamos duas estratégias para minimizar o número de colisões:
 
 No caso de árvores testamos dois tipos:
 \subsection{ Árvore Binária de Busca Não Balanceada }
-   Foi implementada através de ponteiros encadeados, pois a representação com array ficaria inviável em razão de seu despercídio de memória (afinal, a árvore pode ficar drasticamente degenerada). Os algoritmos de inserção, remoção e busca foram feitos de modo iterativo, a fim de se evitar a possibilidade de "stack overflow", devido ao grande número de elementos que seria inserido; como a árvore nunca é balanceada, poderíamos atingir níveis muito baixos.
+\indent Foi implementada através de ponteiros encadeados, pois a representação com array ficaria inviável em razão de seu despercídio de memória (afinal, a árvore pode ficar drasticamente degenerada). Os algoritmos de inserção, remoção e busca foram feitos de modo iterativo, a fim de se evitar a possibilidade de "stack overflow", devido ao grande número de elementos que seria inserido; como a árvore nunca é balanceada, poderíamos atingir níveis muito baixos.
 
 \subsection{ AVL (ABB Balanceada) }
-   A implementação de AVL por nós utilizada foi extraída de uma biblioteca popular chamada "libavl". Mais informações sobre ela encontram-se em: http://adtinfo.org/
-   Utilizamos a versão simples, ensinada em sala de aula. O site apresenta também uma documentação detalhada que enuncia quais fragmentos de código executam uma determinada operação (como rotações). No caso de rebalanceamento, por exemplo, tais informações encontram-se aqui: 
+\indent A implementação de AVL por nós utilizada foi extraída de uma biblioteca popular chamada "libavl". Mais informações sobre ela encontram-se em: http://adtinfo.org/
+
+\indent Utilizamos a versão simples, ensinada em sala de aula. O site apresenta também uma documentação detalhada que enuncia quais fragmentos de código executam uma determinada operação (como rotações). No caso de rebalanceamento, por exemplo, tais informações encontram-se aqui: 
    http://adtinfo.org/libavl.html/Rebalancing-AVL-Trees.html
 
 \subsection{ Árvore B }
-   Não conseguimos encontrar uma implementação que fosse bem documentada e permitisse customizar os parâmetros da árvore.
-
+\indent	Utilizamos a kbtree, contida no pacote klib. O repositório está em: https://github.com/attractivechaos/klib
+ 
+\indent	O autor fez uma breve comparação entre a B-Tree e a BST em seu blog: 
+	http://attractivechaos.wordpress.com/
+	2008/09/24/b-tree-vs-binary-search-tree/
 
 %-----------------------------------------------------------------------
 \section{Análise dos resultados}
-	Os testes foram executados em uma máquina com Intel i7 com clock travado em 0.77 GHz com 4 Gb de RAM.
-	A análise foi feita sobre os resultados em anexo.%Ou na seção 4, resultados.
-	No quesito inserção a estrutura mais rápida foi o Hash simples, como esperado, pois só necessita de um passo para os casos de colisão, enquanto o hash duplo seguiu como o segundo melhor, já que para colisões ele roda um operação de hash a mais. Por fim, o hash de listas encadeadas foi o pior, pois necessita de operações de realocação de memória para resolução de colisão, além disso, vale mencionar que as funções do módulo hash de listas encadeadas utiliza um módulo externo de listas encadeadas, o que influencia negativamente no seu desempenho.
-	No quesito busca
+\indent	Os testes foram executados em uma máquina com Intel i7 com clock travado em 0.77 GHz com 4 Gb de RAM. 
 
+\indent	A análise foi feita sobre os resultados em anexo. 
+
+\indent	Os resultados da menor entrada (inst32k5) foram  desconsiderados pois apresentaram erro de medição significativo.
+
+\indent	Analisamos separadamente as Tabelas Hash e as Árvores para depois as compararmos.
+
+\subsection{Hash Tables}	
+\indent	No quesito inserção a estrutura mais rápida foi o Hash simples, como esperado, pois só necessita de um passo para os casos de colisão. Isso possibilita um bom uso do cache do processador. Além disso, o uso de uma boa função de dispersão (FNV1A) possibilitou uma boa distribuição dos valores na tabela, aumentando ainda mais a eficiência do passo simples. O hash duplo seguiu como o segundo melhor, já que para colisões ele roda um operação de hash a mais. Por fim, o hash de listas encadeadas foi o pior, pois necessita de operações de alocação de memória para resolução de colisão, além disso, vale mencionar que as funções do módulo hash de listas encadeadas utiliza um módulo externo de listas encadeadas, o que influencia negativamente no seu desempenho. 
+
+\indent	No quesito busca o hash simples novamente venceu, seguido pelo de lista encadeada e depois o de hash duplo. Provavelmente, isto se deu em razão da operação ligeiramente mais custosa de se calcular um segundo hash.
+
+\indent	Finalmente, no quesito remoção todas ficaram muito próximas, com uma pequena vantagem do hash de encadeamento externo, devido ao fato de neste caso não termos de nos preocupar com os outros elementos da lista. A demora no caso de hash duplo provavelmente se deu em razão do segundo hash.
+
+\indent	No geral, todos ficaram muito próximos, mas o hash de passo unitário acaba se saindo melhor.
+
+\subsection{Árvores}
+\indent Primeiramente, é importante ressaltar que as árvores apresentaram desempenho inferior aos Hashes. Isto se deu em razão de custos a mais com alocação de memória e percurso das árvores. Nos hashes, com uma boa distribuição, as operações tornam-se todas praticamente O(1).
+
+\indent A árvore com os melhores tempos médios de inserção é a AVL, seguida da B e em ultimo ficou a BST, como esperado, afinal esta não apresenta balanceamento algum, podendo ficar com uma altura extremamente elevada. É interessante notar que a BST teve um tempo total de inserção melhor que o da B, mas a última apesar de perder na entrada menor, ganha à medida que a entrada cresce, ficando com a média mais baixa. 
+
+\indent	Isso é esperado visto que na teoria a B se destaca positivamente com o crescimento da entrada, em algum ponto é possível que ela passe a AVL.
+
+\indent	Os resultados das buscas foram semelhantes aos da inserção, contudo a árvore B apresenta um desempenho mais constante, por armazenar os dados da melhor maneira possível. No caso da BST, em razão do não balanceamento, seu desempenho depende fortemente da entrada. Por fim, a AVL apresenta um desempenho superior ao da B, contudo não a mesma constância.
+
+\indent	Na remoção, a BST tem o melhor tempo total, a AVL tem o melhor tempo médio e a árvore B perde em todos os aspectos. 
+
+\subsection{Conclusão}
+\indent	Assim, podemos concluir que o uso de uma Hash Table é provavelmente a melhor opção caso deseje-se apenas fazer operações de busca e inserção. No caso da remoção, dependerá muito da qualidade da função de dispersão, pois a remoção em hash table é muito custosa. Dentre as três testadas, o tratamento de colisão através de passo unitário é o mais recomendado.
+
+\indent	As árvores balanceadas tiveram um desempenho bem similar, mas não apresentam vantagens para a realização de tais operações. Assim, seu uso não é recomendado para o contexto apresentado.
+	
 %-----------------------------------------------------
-\section{Results}
+%\section{Results}
 
-\begin{table}[H]
-\caption{bst}
-\centering
-\begin{tabular}{llr}
-\toprule
-\multicolumn{2}{c}{BST} \\
-\cmidrule(r){2}
-Inserção & Remoção & Busca \\
-\cmidrule(r){2}
-Média & Total & Média & Total & Média & Total\\
-\midrule
-John & Doe & $7.5$ & Richard & Miles & $2$ \\
-\bottomrule
-\end{tabular}
-\end{table}
+%\begin{table}[H]
+%\caption{BST}
+%\centering
+%\begin{tabular}{llr}
+%\toprule
+%\multicolumn{2}{c}{BST} \\
+%\cmidrule(r){2}
+%Inserção & Remoção & Busca \\
+%\cmidrule(r){2}
+%Média & Total & Média & Total & Média & Total\\
+%\midrule
+%John & Doe & $7.5$ & Richard & Miles & $2$ \\
+%\bottomrule
+%\end{tabular}
+%\end{table}
 
 %\lipsum[5] % Dummy text
 
-\begin{equation}
-\label{eq:emc}
-e = mc^2
-\end{equation}
+%\begin{equation}
+%\label{eq:emc}
+%e = mc^2
+%\end{equation}
 
 %\lipsum[6] % Dummy text
 
 %------------------------------------------------
 
-\section{Discussion}
+%\section{Discussion}
 
-\subsection{Subsection One}
+%\subsection{Subsection One}
 
 %\lipsum[7] % Dummy text
 
-\subsection{Subsection Two}
+%\subsection{Subsection Two}
 
 %\lipsum[8] % Dummy text
 
@@ -213,15 +254,15 @@ e = mc^2
 %	REFERENCE LIST
 %----------------------------------------------------------------------------------------
 
-\begin{thebibliography}{99} % Bibliography - this is intentionally simple in this template
+%\begin{thebibliography}{99} % Bibliography - this is intentionally simple in this template
 
-\bibitem[Figueredo and Wolf, 2009]{Figueredo:2009dg}
-Figueredo, A.~J. and Wolf, P. S.~A. (2009).
-\newblock Assortative pairing and life history strategy - a cross-cultural
-  study.
-\newblock {\em Human Nature}, 20:317--330.
+%\bibitem[Figueredo and Wolf, 2009]{Figueredo:2009dg}
+%Figueredo, A.~J. and Wolf, P. S.~A. (2009).
+%\newblock Assortative pairing and life history strategy - a cross-cultural
+%  study.
+%\newblock {\em Human Nature}, 20:317--330.
  
-\end{thebibliography}
+%\end{thebibliography}
 
 %----------------------------------------------------------------------------------------
 
