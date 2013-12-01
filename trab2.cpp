@@ -176,6 +176,9 @@ void le_grafo(int arestas){
 	int a,b;
 	for(int i=0;i<arestas;i++){
 		scanf("%d %d",&a,&b);
+		//faz tudo ser de 0 a N-1, em vez de 1 a N
+		a--;
+		b--;
 		add_aresta(a,b);
 		add_aresta(b,a);
 		grau[a]++;
@@ -198,7 +201,10 @@ void printa(vector<int> v){
 	}
 	printf("\n--%d\n",v.size());
 }
-void printa_g(){
+void printa_g(int ini, int fim){
+	
+	//fim = g.size();
+
 	/*int ms = 0;
 	for(int i=0;i<g.size();i++){
 		printf("%d ",g[i].size());
@@ -212,10 +218,10 @@ void printa_g(){
 	for(int i=0;i<ms;i++){
 		for()
 	}*/
-	for(int i=0;i<g.size();i++){
+	for(int i=ini;i<fim;i++){
 		printf("g[%d]: ",i);
 		for(int j=0; j<g[i].size();j++){
-			printf("%d",g[i][j]);
+			printf("%d,",g[i][j]);
 		}
 		printf("\n");
 	}
