@@ -71,7 +71,7 @@ vector<int> encontra_clique(){
 		}
 	}
 	
-	//printf("%d\n",mi);
+	printf("%d\n",mi);
 	//printa(grau);
 
 	//poe em S, caso base do guloso
@@ -137,7 +137,10 @@ vector<int> encontra_clique(){
 		int mg = 0;
 		int mi;
 
-		if(sus.size()==0) break;//n ha mais ngm no grafo q pode fazer parte do clique
+		if(sus.size()==0) {
+			printf("saiu.\n");	
+			break;//n ha mais ngm no grafo q pode fazer parte do clique
+		}
 		for(int i=0;i<sus.size();i++){
 			if(grau[sus[i]]>=mg){
 				mg=grau[sus[i]];
@@ -152,6 +155,61 @@ vector<int> encontra_clique(){
 		sus.clear();
 		//sus2.clear();
 		//e damos o passo
+		S.push_back(mi);
+	}
+	return S;
+}
+
+vector<int> encontra_cliqueq(vector< vector<int> > h){
+	vector<int> S;
+	vector<int> marcados;
+	int mi,mg=0;
+	for(int i=0;i<h.size();i++){
+		if(h[i].size()>mg){
+			mg=h[i].size();
+			mi=i;
+		}
+	}
+	
+	S.push_back(mi);
+	while(1){
+		marcados.push_back(S[S.size()-1]);
+
+		vector<int> viz;
+
+		for (int i=0;i<S.size();i++){
+			for(int j=0;j<h[S[i]].size();j++){
+				viz.push_back(h[S[i]][j]);
+			}
+		}
+	
+		sort(viz.begin(),viz.end());
+	
+		int t_uc=0,c=viz[0],ac;
+		vector<int> sus;
+
+		while(t_uc<viz.size()){
+			ac = count(viz.begin()+t_uc, viz.end(), c);
+			t_uc+=ac;
+			if(ac==S.size()) sus.push_back(c);
+			c=viz[t_uc];
+		}
+
+		for(int i=0;i<marcados.size();i++)sus.erase(remove(sus.begin(), sus.end(), marcados[i]), sus.end());
+		
+		int mg = 0;
+		int mi;
+
+		if(sus.size()==0) break;
+		
+		for(int i=0;i<sus.size();i++){
+			if(h[sus[i]].size()>=mg){
+				mg=h[sus[i]].size();
+				mi=sus[i];
+			}
+		}
+		viz.clear();
+		sus.clear();
 		S.push_back(mi);
 	}
 	return S;
@@ -201,31 +259,82 @@ void printa(vector<int> v){
 	}
 	printf("\n--%d\n",v.size());
 }
-void printa_g(int ini, int fim){
+void printa_m(vector< vector<int> > m,int ini, int fim){
 	
 	//fim = g.size();
-
-	/*int ms = 0;
-	for(int i=0;i<g.size();i++){
-		printf("%d ",g[i].size());
-		if(g[i].size()>ms) ms=g[i].size();	
-	}
-	printf("\n");
-	for(int i=0;i<g.size();i++){
-		printf("- ");
-	}
-	printf("\n");
-	for(int i=0;i<ms;i++){
-		for()
-	}*/
+	
 	for(int i=ini;i<fim;i++){
-		printf("g[%d]: ",i);
-		for(int j=0; j<g[i].size();j++){
-			printf("%d,",g[i][j]);
+		printf("m[%d]: ",i);
+		for(int j=0; j<m[i].size();j++){
+			printf("%d,",m[i][j]);
 		}
 		printf("\n");
 	}
 }
+
+
+
+vector< vector<int> > encontra_cobertura_minimal(){
+	vector< vector<int> > vl (g.begin(),g.end());
+	int q = 0;
+	vector<int> marcados;
+	vector< vector<int> > S;
+	while(vl.size()!=0){
+		S[q] = encontra_cliqueq(vl);
+		//p cada elemento em S[q], se existir em vl, retira de vl
+		
+		for(int i=0;i<S[q].size();i++){
+			vl[S[q][i]].clear();
+		}
+		q++;
+	}
+	for(int p=1;p<=q;p++){
+		vector<int> viz;
+		for (int i=0;i<S[p].size();i++){
+			for(int j=0;j<g[S[p][i]].size();j++){
+				viz.push_back(g[ S[p][i] ][ j ]);
+			}
+		}
+		
+		sort(viz.begin(),viz.end());
+		
+		int t_uc=0,c=viz[0],ac;
+		vector<int> sus;
+		while(t_uc<viz.size()){//enquanto todo mundo n tiver sido contado
+			ac = count(viz.begin()+t_uc, viz.end(), c);//conta esse,mas vai diminuindo o espectro da busca, ja q ta ordenado
+			t_uc+=ac;
+			if(ac==S[p].size()){//se for vizinho de td mundo
+				sus.push_back(c);//eh um suspeito 
+			}
+			c=viz[t_uc];//agora vamos contar o proximo numero, pulando as repeticoes dos ultimos
+		}
+		/*
+		for(int i=0;i<marcados.size();i++){
+			sus.erase(remove(sus.begin(), sus.end(), marcados[i]), sus.end());
+		}
+		*/
+		int mg = 0;
+		int mi;
+
+		if(sus.size()==0) {	
+			continue;//n ha mais ngm no grafo q pode fazer parte do clique
+		}
+		for(int i=0;i<sus.size();i++){
+			if(grau[sus[i]]>=mg){
+				mg=grau[sus[i]];
+				mi=sus[i];
+			}
+		}
+		//dai zeramos
+		viz.clear();
+		sus.clear();
+		//sus2.clear();
+		//e damos o passo
+		S[p].push_back(mi);
+	}
+	return S;
+}
+
 int main(){
 	int v,e;
 	scanf("%d %d",&v,&e);
@@ -234,11 +343,17 @@ int main(){
 	//init_cor();
 	le_grafo(e);
 	
-	vector<int> cl = encontra_clique();
+	vector<int> cl = encontra_cliqueq(g);
 	printf("clique maximo:\n");	
 	printa(cl);
 	
-	//printa_g();
+	vector< vector<int> > cob_min = encontra_cobertura_minimal();
+	
+	printa_m(cob_min,0,cob_min.size());
+	
+	//printa_m();
+	
+	
 	int k = encontra_k();
 	printf("k = %d\n",k);
 	return 0;
