@@ -16,30 +16,18 @@ void dfs(int src){
 	int mc = 1;
 	int b;
 	vector<int> cor_viz;
-	//printf("src: %d cor: %d\n",src,cor[src]);
-	//if(cor[src]>1) return cor[src];//se ja tiver marcado
-	//else if(cor[src]==0){
-	
-		for(int i=0;i<g[src].size();i++){
-			int a = g[src][i];
-			//if(cor[a]==0){ 
-			//	b = dfs(a);
-				cor_viz.push_back(cor[a]);
-			//}		
+	for(int i=0;i<g[src].size();i++){
+		int a = g[src][i];
+			cor_viz.push_back(cor[a]);		
 		}
-	//}
-	//printf("cor_viz\n");
-	//printa(cor_viz);
 	sort(cor_viz.begin(),cor_viz.end());
 	for(int i=0;i<cor_viz.size();i++){
 		if(cor_viz[i]==mc) mc++;
 	}
-	//printf("mc: %d\n---------\n",mc);
 	cor[src]=mc;
 	for(int i=0;i<g[src].size()-1;i++){
 		if(cor[g[src][i]]==0) dfs(g[src][i]);
 	}
-	//return mc;
 }
 void init_cor(int src){
 	cor.resize(g.size());
@@ -51,7 +39,6 @@ void init_cor(int src){
 int encontra_k(){
 	int v = 0;
 	init_cor(v);
-	//printf("primeiro k %d",dfs(v));
 	dfs(v);
 	sort(cor.begin(), cor.end());
 	int k = cor[cor.size()-1];
@@ -62,6 +49,7 @@ int encontra_k(){
 vector<int> encontra_clique(){
 	vector<int> S;
 	vector<int> marcados;
+	
 	//acha o maior grau em g
 	int mi,mg=0;
 	for(int i=0;i<g.size();i++){
@@ -70,44 +58,34 @@ vector<int> encontra_clique(){
 			mi=i;
 		}
 	}
-	
-	printf("%d\n",mi);
-	//printa(grau);
 
-	//poe em S, caso base do guloso
+	//poe em S, caso base 
 	S.push_back(mi);
+	
 	while(1){
 		marcados.push_back(S[S.size()-1]);//marca o ultimo inserido
 
-		//printf("marcados-----------\n");
-		//printa(marcados);
-
 		vector<int> viz;
+		
 		//p cada elemento em S, poe todos os seus vizinhos em viz	
 		for (int i=0;i<S.size();i++){
 			for(int j=0;j<g[S[i]].size();j++){
 				viz.push_back(g[S[i]][j]);
 			}
 		}
+		
 		//temos um vetor de vizinhos, mtos deles repetidos,
 		//queremos ver quais sao vizinhos de todos em S, ou seja, quais aparecem #S vezes
-		//printa(viz);	
-		sort(viz.begin(),viz.end());//ordena
-	
-		//printf("vizinhos -----------------\n");
-		//printa(viz);
+
+		sort(viz.begin(),viz.end());
 		
 		int t_uc=0,c=viz[0],ac;
 		vector<int> sus;
-	
-		//printf("tamanho de S: %d\n",S.size());
 	
 		//t_uc quantidade de contados, c quem vai ser contado, ac qnt de vezes q c aparece em viz
 		while(t_uc<viz.size()){//enquanto todo mundo n tiver sido contado
 			ac = count(viz.begin()+t_uc, viz.end(), c);//conta esse,mas vai diminuindo o espectro da busca, ja q ta ordenado
 			t_uc+=ac;
-	
-			//printf("contou %d ocorrencias de %d em vizinhos, no total tem %d\n",ac,c,t_uc);
 		
 			if(ac==S.size()){//se for vizinho de td mundo
 				sus.push_back(c);//eh um suspeito 
@@ -115,30 +93,17 @@ vector<int> encontra_clique(){
 			c=viz[t_uc];//agora vamos contar o proximo numero, pulando as repeticoes dos ultimos
 		}
 	
-		//printf("suspeitos------------ \n");
-		//printa(sus);
-	
 		//agora temos uma serie de suspeitos e temos q achar o de maior grau, para dar o passo do guloso
 		//dai tiramos quem ja esta marcado
 		vector<int> sus2;
 		for(int i=0;i<marcados.size();i++){
 			sus.erase(remove(sus.begin(), sus.end(), marcados[i]), sus.end());
-			// *p = find(sus.begin(),sus.end(),marcados[i]);//retorna um ponteiro para o elemento encontrado, nao o indice
-			//printf("%d",*p);
-			//if(*p==marcados[i]){//se marcados[i] nao estiver em suspeitos
-			//	sus2.push_back(sus[i]);
-			//	printf("%d",sus[i]);
-			//}
 		}
 		
-		//printf("suspeitos n marcados ------------\n");
-		//printa(sus);
-			
 		int mg = 0;
 		int mi;
 
 		if(sus.size()==0) {
-			printf("saiu.\n");	
 			break;//n ha mais ngm no grafo q pode fazer parte do clique
 		}
 		for(int i=0;i<sus.size();i++){
@@ -148,19 +113,17 @@ vector<int> encontra_clique(){
 			}
 		}
 
-		//printf("novo membro de S: %d\n\n\n\n",mi);
-
 		//dai zeramos
 		viz.clear();
 		sus.clear();
-		//sus2.clear();
+
 		//e damos o passo
 		S.push_back(mi);
 	}
 	return S;
 }
 
-vector<int> encontra_cliqueq(vector< vector<int> > h){
+vector<int> encontra_cliqueq(vector< vector<int> > h){ //versao generica,enxuta e com firulas
 	vector<int> S;
 	vector<int> marcados;
 	int mi,mg=0;
@@ -195,7 +158,7 @@ vector<int> encontra_cliqueq(vector< vector<int> > h){
 			c=viz[t_uc];
 		}
 
-		for(int i=0;i<marcados.size();i++)sus.erase(remove(sus.begin(), sus.end(), marcados[i]), sus.end());
+		for(int i=0;i<marcados.size();i++) sus.erase(remove(sus.begin(), sus.end(), marcados[i]), sus.end());
 		
 		int mg = 0;
 		int mi;
@@ -214,6 +177,7 @@ vector<int> encontra_cliqueq(vector< vector<int> > h){
 	}
 	return S;
 }
+//versao com grafo nao necessariamente ordenado e completo
 /*
 void add_aresta(int src, int dst){
 	vector<int>::iterator i = find(g.begin(),g.end(),src);
@@ -227,6 +191,7 @@ void add_aresta(int src, int dst){
 		grau[i]++;
 	}
 }*/
+
 void add_aresta(int src, int dst){
 	g[src].push_back(dst);
 }
@@ -259,12 +224,16 @@ void printa(vector<int> v){
 	}
 	printf("\n--%d\n",v.size());
 }
+int acha(int n, vector<int> a){
+	for(int i=0;i<a.size();i++){
+		if(a[i]==n) return i;
+	}
+	return -1;
+}
 void printa_m(vector< vector<int> > m,int ini, int fim){
-	
-	//fim = g.size();
-	
+
 	for(int i=ini;i<fim;i++){
-		printf("m[%d]: ",i);
+		printf("[%d]: ",i);
 		for(int j=0; j<m[i].size();j++){
 			printf("%d,",m[i][j]);
 		}
@@ -272,30 +241,53 @@ void printa_m(vector< vector<int> > m,int ini, int fim){
 	}
 }
 
-
+int size_m(vector< vector<int> > a){
+	int r=0;
+	for(int i=0;i<a.size();i++)
+		r+=a[i].size();
+	return r;
+}
 
 vector< vector<int> > encontra_cobertura_minimal(){
 	vector< vector<int> > vl (g.begin(),g.end());
 	int q = 0;
 	vector<int> marcados;
 	vector< vector<int> > S;
-	while(vl.size()!=0){
+	for(int i=0;i<g.size();i++){
+		S.push_back(vector<int>());
+	}
+	while(size_m(vl)!=0){
+		//printa_m(vl,0,vl.size());
 		S[q] = encontra_cliqueq(vl);
-		//p cada elemento em S[q], se existir em vl, retira de vl
-		
+		//faz vl/Sq
+		//printa(S[q]);
 		for(int i=0;i<S[q].size();i++){
-			vl[S[q][i]].clear();
+			//printf(".\n");
+			//printa_m(vl,0,vl.size());
+			for(int j=0;j<S[q].size();j++){
+				int a = acha(S[q][j],vl[S[q][i]]); 
+				//printf("%d esta na %d posicao em \n",S[q][i],a);
+				//printa(vl[j]);
+				if(a!=-1) {	
+					vl[S[q][i]].erase(vl[S[q][i]].begin()+a);
+				//	printf("tirou %d(%d) de %d \n",S[q][i],vl[j][a],a);
+				}
+			}
 		}
+		//printa_m(vl,0,vl.size());
+		//printf("..\n");
 		q++;
 	}
-	for(int p=1;p<=q;p++){
+	//printa_m(S,0,S.size());
+	S.resize(q);	
+	for(int p=0;p<q;p++){
 		vector<int> viz;
 		for (int i=0;i<S[p].size();i++){
 			for(int j=0;j<g[S[p][i]].size();j++){
 				viz.push_back(g[ S[p][i] ][ j ]);
 			}
 		}
-		
+		//ta errado
 		sort(viz.begin(),viz.end());
 		
 		int t_uc=0,c=viz[0],ac;
@@ -312,7 +304,7 @@ vector< vector<int> > encontra_cobertura_minimal(){
 		for(int i=0;i<marcados.size();i++){
 			sus.erase(remove(sus.begin(), sus.end(), marcados[i]), sus.end());
 		}
-		*/
+		*/	
 		int mg = 0;
 		int mi;
 
@@ -332,6 +324,11 @@ vector< vector<int> > encontra_cobertura_minimal(){
 		//e damos o passo
 		S[p].push_back(mi);
 	}
+	//pra facilitar retirada das duplicatas em S
+	
+	for(int i=0;i<S.size();i++){
+		sort(S[i].begin(),S[i].end());
+	}
 	return S;
 }
 
@@ -340,21 +337,18 @@ int main(){
 	scanf("%d %d",&v,&e);
 	init_grafo(v);
 	init_grau(v);
-	//init_cor();
 	le_grafo(e);
 	
 	vector<int> cl = encontra_cliqueq(g);
-	printf("clique maximo:\n");	
+	printf("clique:\n");	
 	printa(cl);
 	
+	printf("cobertura minimal:\n");
 	vector< vector<int> > cob_min = encontra_cobertura_minimal();
-	
 	printa_m(cob_min,0,cob_min.size());
-	
-	//printa_m();
-	
 	
 	int k = encontra_k();
 	printf("k = %d\n",k);
+	
 	return 0;
 }
