@@ -1,0 +1,9 @@
+Passos para rodar tudo
+
+1) Tenha Ruby instalado!
+2) Coloque as instâncias na pasta 'abc'
+3) rode o 'automatizador.rb'
+4) compile o trab2.cpp 
+5) pegue o resultado - 'a.exe'- e coloque na pasta 'abc'
+6) rode o savior.bat 
+o resultado será o nome das instancias acrecido de v2.out
