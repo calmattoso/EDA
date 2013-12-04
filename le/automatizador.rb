@@ -8,7 +8,7 @@ Dir.foreach("abc"){|x|
     g.each_line do |line|
 
     	if (line[0]=='e'|| line[0]=='p')
-    		f.puts("#{line.match(/[[:digit:]]+ [[:digit:]]+/ )}")
+    		f.puts("#{line.match(/[[:digit:]]+ +[[:digit:]]+/ )}")
     	end
     end
 
