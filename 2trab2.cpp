@@ -362,40 +362,43 @@ int main(){
 	le_grafo(e);
 	
 	vector<int> cl = encontra_cliqueq(g);
-	printf("clique:\n");	
-	printa(cl);
 	
-	printf("cobertura minimal:\n");
+	
+
 	vector< vector<int> > cob_min = encontra_cobertura_minimal();
 	
 	//retira duplicatas
-	
-	/*
-	for(int i=0;i<cob_min.size();i++){
-		sort(cob_min[i].begin(),cob_min[i].end());
-	}
-	int n = cob_min.size();
-	for(int i=0;i<n;i++){//p cada vetor
-		for(int j=i;j<cob_min.size();j++){//p cada elemento da matriz
-		int igual=1;
-			for(int k=0;k<cob_min[j];k++){//p cada elemento do vetor
-				if(cob_min[i][k]!=cob_min[j][k]) igual=0;
-			}
-		igual==1?cob_min[j].clear():continue;
-		}//procura um vetor igual a ele na matriz
-		//se achar deleta e faz um shift, n--(erase?)
-	}
-	*/
 	sort(cob_min.begin(), cob_min.end());
 	for(int i = 0;i<cob_min.size();i++){
 		sort(cob_min[i].begin(), cob_min[i].end());
 	}
 	cob_min.erase(std::unique(cob_min.begin(), cob_min.end()), cob_min.end());
 	
-	printa_m(cob_min,0,cob_min.size());
+	//printf("clique:\n");	
+	printa(cl);
+	
+	//printf("cobertura minimal:\n");
+	//printa_m(cob_min,0,cob_min.size());
+
+	//printf("numero de particoes: ");
+	printf("%d\n",cob_min.size());
+	//printf("tamanhos das particoes:\n");
+	
+	double med = 0;
+	for(int i = 0;i<cob_min.size();i++){
+		med+=cob_min[i].size();
+		printf("%d ",cob_min[i].size());
+	}
+	med = med/cob_min.size();
+	printf("\n");
+	//printf("tamanho medio das particoes: ");
+	printf("%lf\n", med);
+	
+
 	
 	int k = encontra_k();
-	printf("k = %d\n",k);
+	//printf("k = ");
+	printf("%d\n",k);
 	
 	return 0;
 }
